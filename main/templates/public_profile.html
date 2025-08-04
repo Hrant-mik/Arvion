@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'CSS/public_profile.css' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ profile_user.get_full_name|default:profile_user.username }} - Arvion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+    <header class="page-header container">
+      <a href="{% url 'arvion' %}" class="logo" style="pointer-events: none;">
+        <img src="{% static 'images/LogoIcon.png' %}" alt="Arvion Logo" class="logo-img" />
+        <span>Arvion</span>
+      </a>
+    </header>
+
+    <main class="page-main container">
+      <section class="profile-content">
+        <div class="profile-main-card">
+          <img src="{% if profile_user.profile_picture %}{{ profile_user.profile_picture.url }}{% else %}{% static 'images/default_avatar.png' %}{% endif %}" alt="Profile Picture" class="profile-main-card-avatar" />
+          <div class="name">{{ profile_user.get_full_name|default:profile_user.username }}</div>
+          <div class="email">{{ profile_user.email }}</div>
+        </div>
+
+        {% if profile_user.patient_profile %}
+        <div class="info-section">
+            <h2 class="section-title">Բժշկական տվյալներ</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label"><i class="fa-solid fa-tint fa-fw"></i> Արյան խումբ</span>
+                    <span class="value">{{ profile_user.patient_profile.blood_group.group_name|default_if_none:'<span class="not-specified">Նշված չէ</span>'|safe }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label"><i class="fa-solid fa-allergies fa-fw"></i> Ալերգիաներ</span>
+                    <span class="value">{% for item in profile_user.patient_profile.allergies.all %}{{ item.name }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="not-specified">Բացակայում է</span>{% endfor %}</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="info-section">
+            <h2 class="section-title">Կոնտակտային տվյալներ</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label"><i class="fa-solid fa-phone fa-fw"></i> Հեռախոսահամար</span>
+                    <span class="value">{{ profile_user.phone_number|default_if_none:'<span class="not-specified">Նշված չէ</span>'|safe }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label"><i class="fa-solid fa-user-shield fa-fw"></i> Վստահված անձի հեռ.</span>
+                    <span class="value">{{ profile_user.emergency_contact_phone|default_if_none:'<span class="not-specified">Նշված չէ</span>'|safe }}</span>
+                </div>
+            </div>
+        </div>
+      </section>
+    </main>
+    <footer class="page-footer">© {% now "Y" %} Arvion. All rights reserved.</footer>
+</body>
+</html>
